@@ -1,6 +1,7 @@
 version: "3.7"
 services:
   php-apache:
+    container_name: testing-magento.local-build
     build:
       args:
         - DEVELOPER_MODE=1 # needed for the build stage
@@ -8,6 +9,9 @@ services:
     sysctls:
       - net.ipv4.ip_unprivileged_port_start=0
     labels:
+      - traefik.enable=false
+      - traefik.http.frontend.rule=Host:testing-magento.local,www.testing-magento.local
+      - traefik.https.frontend.rule=Host:testing-magento.local,www.testing-magento.local
       # develop with extension that allows setting livereload host and port - https://github.com/lokcito/livereload-extensions
       - traefik.grunt.frontend.rule=Host:testing-magento.local,www.testing-magento.local
       - traefik.grunt.frontend.entryPoints=grunt
@@ -21,19 +25,24 @@ services:
     extra_hosts:
       # For Linux users only till docker.host.internal is not available by default
       # https://github.com/docker/libnetwork/pull/2348/files
+      - "testing-magento.local www.testing-magento.local:127.0.0.1"
       - "host.docker.internal:172.17.0.1"
     external_links:
       - mailhog
     environment:
-      - PHP_IDE_CONFIG=serverName=testing-magento.local
+      # Must be set to some of the domains for xdebug to work. Should have server configured in
+      # Preferences > Language and Frameworks > PHP > Servers
+      # Or just run the project with the same domain and debug enabled in the browser
+      - PHP_IDE_CONFIG=serverName=testing-magento.local-build
       # For Mailhog and mhsendmail (Sendmail replacement)
       - ADDITIONAL_PATH=/usr/local/go/bin
+#      - PHP_XDEBUG_ENABLED=1 # needed for the entrypoint script
 
 # IMPORTANT FOR MAC USERS!!!
 # ALL BELOW is for Mac only to enable docker sync stack
 #    volumes:
-#      - testing-magento.local-sync:/var/www/html:nocopy
+#      - testing-magento.local-build-sync:/var/www/html:nocopy
 
 #volumes:
-#  testing-magento.local-sync:
+#  testing-magento.local-build-sync:
 #    external: true

@@ -461,3 +461,23 @@ ErrorDocument 403 /pub/errors/404.php
             Require all denied
         </IfVersion>
     </Files>
+
+    <Files docker-compose-build.yml>
+        <IfVersion < 2.4>
+            order allow,deny
+            deny from all
+        </IfVersion>
+        <IfVersion >= 2.4>
+            Require all denied
+        </IfVersion>
+    </Files>
+
+    <Files docker-compose-development.yml>
+        <IfVersion < 2.4>
+            order allow,deny
+            deny from all
+        </IfVersion>
+        <IfVersion >= 2.4>
+            Require all denied
+        </IfVersion>
+    </Files>

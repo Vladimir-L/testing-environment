@@ -1,5 +1,5 @@
 # SSL certificates for development
-# $ mkcert testing-magento.local
+# $ mkcert testing-magento.local www.testing-magento.local
 #
 # DEVELOPMENT:
 # $ docker-compose -f docker-compose.yml -f docker-compose-dev.yml up -d
@@ -24,15 +24,15 @@ services:
     restart: always
     labels:
       - traefik.enable=true
-      - traefik.http.frontend.rule=Host:testing-magento.local
+      - traefik.http.frontend.rule=Host:testing-magento.local,www.testing-magento.local
       - traefik.http.frontend.entryPoints=http
-      - traefik.https.frontend.rule=Host:testing-magento.local
+      - traefik.https.frontend.rule=Host:testing-magento.local,www.testing-magento.local
       - traefik.https.frontend.entryPoints=https
       - traefik.https.protocol=https
       - traefik.https.port=443
     # Must add extra_hosts to be written to /etc/hosts - otherwise containerized application can not curl itself
     extra_hosts:
-      - "testing-magento.local:127.0.0.1"
+      - "testing-magento.local www.testing-magento.local:127.0.0.1"
 #    links:
 #      - memcached
 #      - redis
